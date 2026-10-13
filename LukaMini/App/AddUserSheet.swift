@@ -51,7 +51,7 @@ struct AddUserSheet: View {
                     .focused($focusedField, equals: .password)
                     .onSubmit { addUser() }
             } header: {
-                Text("Dexcom Credentials")
+                Text("Dexcom credentials")
             } footer: {
                 Text("Enter the Dexcom username and password of the person whose readings you want to see—not a follower's. Their account must have Dexcom Share turned on with at least one follower. If the username is a phone number, include a country code (for example, +12223334444).")
             }

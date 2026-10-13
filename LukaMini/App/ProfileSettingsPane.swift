@@ -25,41 +25,48 @@ struct ProfileSettingsPane: View {
     }
     
     var body: some View {
-        Form {
-            Section {
-                TextField("Name:", text: $editor.displayName, prompt: Text(editor.namePlaceholder))
-                
-                Toggle("Show in menu bar", isOn: showsInMenuBarBinding)
-            } header: {
-                Text("User")
-            }
-            
-            Section {
-                Picker("Account Location:", selection: $editor.accountLocation) {
-                    ForEach(AccountLocation.allCases) { location in
-                        Text(location.displayName).tag(location)
-                    }
+        VStack(spacing: 0) {
+            Form {
+                Section {
+                    TextField("Name:", text: $editor.displayName, prompt: Text(editor.namePlaceholder))
+                    
+                    Toggle("Show in menu bar", isOn: showsInMenuBarBinding)
+                } header: {
+                    Text("User")
                 }
                 
-                TextField("Username:", text: $editor.username)
-                
-                SecureField("Password:", text: $editor.password)
-            } header: {
-                Text("Dexcom Credentials")
-            } footer: {
-                Text("Enter the Dexcom username and password of the person whose readings you want to see—not a follower's. Their account must have Dexcom Share turned on with at least one follower. If the username is a phone number, include a country code (for example, +12223334444).")
+                Section {
+                    Picker("Account Location:", selection: $editor.accountLocation) {
+                        ForEach(AccountLocation.allCases) { location in
+                            Text(location.displayName).tag(location)
+                        }
+                    }
+                    
+                    TextField("Username:", text: $editor.username)
+                    
+                    SecureField("Password:", text: $editor.password)
+                } header: {
+                    Text("Dexcom credentials")
+                } footer: {
+                    Text("Enter the Dexcom username and password of the person whose readings you want to see—not a follower's. Their account must have Dexcom Share turned on with at least one follower. If the username is a phone number, include a country code (for example, +12223334444).")
+                }
             }
-        }
-        .formStyle(.grouped)
-        .navigationTitle(profile.displayName.isEmpty ? "User" : profile.displayName)
-        .toolbar {
-            ToolbarItem(placement: .automatic) {
-                Button("Save") {
+            .formStyle(.grouped)
+            
+            Divider()
+            
+            HStack {
+                Spacer()
+                
+                Button("Save Changes") {
                     saveProfile()
                 }
+                .keyboardShortcut(.defaultAction)
                 .disabled(!canSave)
             }
+            .padding()
         }
+        .navigationTitle(profile.displayName.isEmpty ? "User" : profile.displayName)
     }
     
     private var canSave: Bool {

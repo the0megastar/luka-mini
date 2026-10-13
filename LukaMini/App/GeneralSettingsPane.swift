@@ -68,7 +68,7 @@ struct GeneralSettingsPane: View {
                     }
                 }
             } header: {
-                Text("Menu Bar")
+                Text("Menu bar")
             }
             
             Section {
@@ -80,7 +80,7 @@ struct GeneralSettingsPane: View {
             Section {
                 Toggle("Fetch from Luka servers", isOn: $useServerForReadings)
             } header: {
-                Text("Data Source")
+                Text("Data source")
             } footer: {
                 Text("Fetch readings from the Luka server, which caches them while the Luka iOS app runs a Live Activity. This reduces direct requests to Dexcom. Falls back to Dexcom automatically when no cached readings are available.")
             }

@@ -37,6 +37,16 @@ struct SettingsView: View {
             detailPane
         }
         .frame(minWidth: 700, minHeight: 500)
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button {
+                    toggleSidebar()
+                } label: {
+                    Image(systemName: "sidebar.leading")
+                }
+                .help("Toggle Sidebar")
+            }
+        }
         .onAppear {
             settingsModel.selectInitialPane()
         }
@@ -133,5 +143,12 @@ struct SettingsView: View {
                 description: Text("Select a settings pane from the sidebar")
             )
         }
+    }
+    
+    private func toggleSidebar() {
+        NSApp.keyWindow?.firstResponder?.tryToPerform(
+            #selector(NSSplitViewController.toggleSidebar(_:)),
+            with: nil
+        )
     }
 }
