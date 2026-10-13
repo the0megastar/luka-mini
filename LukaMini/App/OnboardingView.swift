@@ -44,17 +44,17 @@ struct OnboardingView: View {
             
             Form {
                 Section {
-                    TextField("Username:", text: $username)
+                    TextField("Username", text: $username)
                         .focused($focusedField, equals: .username)
                         .onSubmit { focusedField = .password }
                     
-                    SecureField("Password:", text: $password)
+                    SecureField("Password", text: $password)
                         .focused($focusedField, equals: .password)
                         .onSubmit {
                             Task { await signIn() }
                         }
                     
-                    Picker("Region:", selection: $accountLocation) {
+                    Picker("Region", selection: $accountLocation) {
                         ForEach(AccountLocation.allCases) { location in
                             Text(location.displayName).tag(location)
                         }

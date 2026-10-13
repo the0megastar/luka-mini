@@ -27,7 +27,7 @@ struct AddUserSheet: View {
     var body: some View {
         Form {
             Section {
-                TextField("Name:", text: $displayName, prompt: Text("Optional"))
+                TextField("Name", text: $displayName, prompt: Text("Optional"))
                     .focused($focusedField, equals: .displayName)
                     .onSubmit { focusedField = .username }
                 
@@ -37,17 +37,17 @@ struct AddUserSheet: View {
             }
             
             Section {
-                Picker("Account Location:", selection: $accountLocation) {
+                Picker("Account location", selection: $accountLocation) {
                     ForEach(AccountLocation.allCases) { location in
                         Text(location.displayName).tag(location)
                     }
                 }
                 
-                TextField("Username:", text: $username)
+                TextField("Username", text: $username)
                     .focused($focusedField, equals: .username)
                     .onSubmit { focusedField = .password }
                 
-                SecureField("Password:", text: $password)
+                SecureField("Password", text: $password)
                     .focused($focusedField, equals: .password)
                     .onSubmit { addUser() }
             } header: {

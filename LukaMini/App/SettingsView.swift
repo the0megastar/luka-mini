@@ -109,6 +109,7 @@ struct SettingsView: View {
                 } label: {
                     Label("Add User", systemImage: "plus")
                 }
+                .keyboardShortcut("n", modifiers: .command)
                 .help("Add User")
             }
         }

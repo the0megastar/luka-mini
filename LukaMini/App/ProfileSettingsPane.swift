@@ -28,7 +28,7 @@ struct ProfileSettingsPane: View {
         VStack(spacing: 0) {
             Form {
                 Section {
-                    TextField("Name:", text: $editor.displayName, prompt: Text(editor.namePlaceholder))
+                    TextField("Name", text: $editor.displayName, prompt: Text(editor.namePlaceholder))
                     
                     Toggle("Show in menu bar", isOn: showsInMenuBarBinding)
                 } header: {
@@ -36,15 +36,15 @@ struct ProfileSettingsPane: View {
                 }
                 
                 Section {
-                    Picker("Account Location:", selection: $editor.accountLocation) {
+                    Picker("Account location", selection: $editor.accountLocation) {
                         ForEach(AccountLocation.allCases) { location in
                             Text(location.displayName).tag(location)
                         }
                     }
                     
-                    TextField("Username:", text: $editor.username)
+                    TextField("Username", text: $editor.username)
                     
-                    SecureField("Password:", text: $editor.password)
+                    SecureField("Password", text: $editor.password)
                 } header: {
                     Text("Dexcom credentials")
                 } footer: {

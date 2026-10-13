@@ -22,13 +22,13 @@ struct GeneralSettingsPane: View {
     var body: some View {
         Form {
             Section {
-                Picker("Graph Range:", selection: $graphRange) {
+                Picker("Graph range", selection: $graphRange) {
                     ForEach(GraphRange.allCases) { range in
                         Text(range.abbreviatedName).tag(range)
                     }
                 }
                 
-                Picker("Units:", selection: $useMMOL) {
+                Picker("Units", selection: $useMMOL) {
                     Text("mg/dL").tag(false)
                     Text("mmol/L").tag(true)
                 }
@@ -40,7 +40,7 @@ struct GeneralSettingsPane: View {
                 
                 Toggle("Color glucose reading", isOn: $colorMenuBarReading)
                 
-                LabeledContent("Target Range:") {
+                LabeledContent("Target range") {
                     HStack(spacing: 6) {
                         TextField(
                             "",
