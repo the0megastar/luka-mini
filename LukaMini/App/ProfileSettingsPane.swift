@@ -11,112 +11,82 @@ struct ProfileSettingsPane: View {
     let credentials: ProfileCredentials?
     let appModel: AppModel
     
-    @State private var editor: ProfileEditor
-    @State private var original: ProfileEditor
+    @State private var displayName: String
+    @State private var username: String
+    @State private var password: String
+    @State private var accountLocation: AccountLocation
     
     init(profile: GlucoseProfile, credentials: ProfileCredentials?, appModel: AppModel) {
         self.profile = profile
         self.credentials = credentials
         self.appModel = appModel
         
-        let editor = ProfileEditor(profile: profile, credentials: credentials)
-        self._editor = State(initialValue: editor)
-        self._original = State(initialValue: editor)
+        self._displayName = State(initialValue: profile.displayName)
+        self._username = State(initialValue: credentials?.username ?? "")
+        self._password = State(initialValue: credentials?.password ?? "")
+        self._accountLocation = State(initialValue: profile.accountLocation)
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            Form {
-                Section {
-                    TextField("Name", text: $editor.displayName, prompt: Text(editor.namePlaceholder))
-                    
-                    Toggle("Show in menu bar", isOn: showsInMenuBarBinding)
-                } header: {
-                    Text("User")
-                }
+        Form {
+            Section {
+                TextField("Name", text: $displayName, prompt: Text(namePlaceholder))
+                    .onSubmit { saveIfValid() }
                 
-                Section {
-                    Picker("Account location", selection: $editor.accountLocation) {
-                        ForEach(AccountLocation.allCases) { location in
-                            Text(location.displayName).tag(location)
-                        }
+                Toggle("Show in menu bar", isOn: showsInMenuBarBinding)
+            } header: {
+                Text("User")
+            }
+            
+            Section {
+                Picker("Account location", selection: $accountLocation)  {
+                    ForEach(AccountLocation.allCases) { location in
+                        Text(location.displayName).tag(location)
                     }
-                    
-                    TextField("Username", text: $editor.username)
-                    
-                    SecureField("Password", text: $editor.password)
-                } header: {
-                    Text("Dexcom credentials")
-                } footer: {
-                    Text("Enter the Dexcom username and password of the person whose readings you want to see—not a follower's. Their account must have Dexcom Share turned on with at least one follower. If the username is a phone number, include a country code (for example, +12223334444).")
                 }
-            }
-            .formStyle(.grouped)
-            
-            Divider()
-            
-            HStack {
-                Spacer()
+                .onChange(of: accountLocation) { _, _ in saveIfValid() }
                 
-                Button("Save Changes") {
-                    saveProfile()
-                }
-                .keyboardShortcut(.defaultAction)
-                .disabled(!canSave)
+                TextField("Username", text: $username)
+                    .onSubmit { saveIfValid() }
+                
+                SecureField("Password", text: $password)
+                    .onSubmit { saveIfValid() }
+            } header: {
+                Text("Dexcom credentials")
+            } footer: {
+                Text("Enter the Dexcom username and password of the person whose readings you want to see—not a follower's. Their account must have Dexcom Share turned on with at least one follower. If the username is a phone number, include a country code (for example, +12223334444).")
             }
-            .padding()
         }
+        .formStyle(.grouped)
         .navigationTitle(profile.displayName.isEmpty ? "User" : profile.displayName)
     }
     
-    private var canSave: Bool {
-        editor.canSave && editor != original
-    }
-    
-    private var showsInMenuBarBinding: Binding<Bool> {
-        Binding {
-            editor.showsInMenuBar
-        } set: { value in
-            editor.showsInMenuBar = value
-            original.showsInMenuBar = value
-            appModel.setShowsInMenuBar(id: profile.id, showsInMenuBar: value)
-        }
-    }
-    
-    private func saveProfile() {
-        appModel.updateProfile(
-            id: profile.id,
-            displayName: editor.displayName,
-            username: editor.username,
-            password: editor.password,
-            accountLocation: editor.accountLocation,
-            showsInMenuBar: editor.showsInMenuBar
-        )
-        original = editor
-    }
-}
-
-struct ProfileEditor: Equatable {
-    var displayName: String
-    var username: String
-    var password: String
-    var accountLocation: AccountLocation
-    var showsInMenuBar: Bool
-    
-    var canSave: Bool {
-        !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !password.isEmpty
-    }
-    
-    var namePlaceholder: String {
+    private var namePlaceholder: String {
         let trimmed = username.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? "Optional" : trimmed
     }
     
-    init(profile: GlucoseProfile, credentials: ProfileCredentials?) {
-        self.displayName = profile.displayName
-        self.username = credentials?.username ?? ""
-        self.password = credentials?.password ?? ""
-        self.accountLocation = profile.accountLocation
-        self.showsInMenuBar = profile.showsInMenuBar
+    private var showsInMenuBarBinding: Binding<Bool> {
+        Binding {
+            profile.showsInMenuBar
+        } set: { value in
+            appModel.setShowsInMenuBar(id: profile.id, showsInMenuBar: value)
+        }
+    }
+    
+    private func saveIfValid() {
+        guard !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !password.isEmpty else {
+            return
+        }
+        
+        appModel.updateProfile(
+            id: profile.id,
+            displayName: displayName,
+            username: username,
+            password: password,
+            accountLocation: accountLocation,
+            showsInMenuBar: profile.showsInMenuBar
+        )
     }
 }

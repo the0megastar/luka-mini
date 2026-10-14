@@ -138,11 +138,8 @@ struct SettingsView: View {
                 }
             }
         } else {
-            ContentUnavailableView(
-                "No Selection",
-                systemImage: "sidebar.left",
-                description: Text("Select a settings pane from the sidebar")
-            )
+            Text("Select a settings pane")
+                .foregroundStyle(.secondary)
         }
     }
     
@@ -151,5 +148,18 @@ struct SettingsView: View {
             #selector(NSSplitViewController.toggleSidebar(_:)),
             with: nil
         )
+    }
+}
+
+extension AccountLocation: @retroactive Identifiable, @retroactive CaseIterable {
+    public static var allCases: [AccountLocation] { [.usa, .worldwide, .apac] }
+    public var id: Self { self }
+
+    var displayName: String {
+        switch self {
+        case .usa: "United States"
+        case .apac: "Japan"
+        case .worldwide: "Anywhere Else"
+        }
     }
 }
